@@ -37,8 +37,8 @@ Function Login
 	# Validated in manifest file.
 	Import-Module CredentialManager
 
-	# New-StoredCredential -Target Ansible -UserName Dummy -Password "?" -Comment "FortiManager API User" -Type Generic -Persist Enterprise
-	$Auth = Get-StoredCredential -Target Ansible -AsCredentialObject
+	# New-StoredCredential -Target FMG -UserName Dummy -Password "?" -Comment "FortiManager API User" -Type Generic -Persist Enterprise
+	$Auth = Get-StoredCredential -Target Dummy -AsCredentialObject
 
 	$response = post "exec" @( @{
 		url = "/sys/login/user"
