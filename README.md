@@ -1,5 +1,5 @@
-# FortiManager
+# PowerFortiManager
 
 ![FMG_PS](Image/logo.png)
 
-This tool easily uses the FMG API and Powershell to automate tasks performed on FortiGate devices.
+This tool allows you to easily interact with the FMG API via Powershell to automate tasks performed on FortiGate devices.
