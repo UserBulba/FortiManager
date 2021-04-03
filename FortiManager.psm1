@@ -26,7 +26,8 @@ Function Login
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$False)][string]$FortiManager,
-		[Parameter(Mandatory=$False)][string]$adom
+		[Parameter(Mandatory=$False)][string]$adom,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	# Set FMG IP Address from Parameter
@@ -60,6 +61,11 @@ Function Logout
 		Logut
 	#>
 
+	[CmdletBinding()]
+	Param (
+		[Parameter(DontShow)]$HiddenParameter
+	)
+
 	IF (!($global:FortiManager))
 		{$global:FortiManager = Read-Host "Enter FMG IP Address"}
 
@@ -85,7 +91,8 @@ Function GetDevice
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
-		[Parameter(Mandatory=$True)][string]$device
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -113,7 +120,8 @@ Function GetAllDevices
 
 	[CmdletBinding()]
 	Param (
-		[Parameter(Mandatory=$True)][string]$adom
+		[Parameter(Mandatory=$True)][string]$adom,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -142,7 +150,8 @@ Function GetScriptLogDevice
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
-		[Parameter(Mandatory=$True)][string]$device
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -172,7 +181,8 @@ Function ExeScript
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
 		[Parameter(Mandatory=$True)][string]$script,
-		[Parameter(Mandatory=$True)][string]$device
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -208,7 +218,8 @@ Function GetPolicyScope
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
-		[Parameter(Mandatory=$True)][string]$Path
+		[Parameter(Mandatory=$True)][string]$Path,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -236,7 +247,8 @@ Function SetPolicyScope
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
 		[Parameter(Mandatory=$True)][string]$device,
-		[Parameter(Mandatory=$True)][string]$Path
+		[Parameter(Mandatory=$True)][string]$Path,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$InitData = @( @{
@@ -289,7 +301,8 @@ Function InstallPolicy
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
 		[Parameter(Mandatory=$True)][string]$device,
-		[Parameter(Mandatory=$True)][string]$package
+		[Parameter(Mandatory=$True)][string]$package,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -301,6 +314,41 @@ Function InstallPolicy
 			adom = $adom
 			pkg = $package
 		}
+	})
+	# Clear session.
+	Logout | Out-Null
+
+	return $response
+}
+#
+Function InstallConfig
+{
+	<#
+	.DESCRIPTION
+		Install config.
+	.EXAMPLE
+		$Response = InstallConfig -adom "root" -device "Dummy"
+	#>
+
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(Mandatory=$True)][string]$adom,
+		[Parameter(DontShow)]$HiddenParameter
+	)
+
+	$Token = Login
+	IF (!$Token) {Break}
+
+	$response = post "exec" @( @{
+		url = "/securityconsole/install/device"
+		data = @{
+			scope = @{
+				name = $device
+			}
+			adom = $adom
+			flags = "none"
+        }
 	})
 	# Clear session.
 	Logout | Out-Null
@@ -321,7 +369,8 @@ Function AddDeviceToGroup
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
 		[Parameter(Mandatory=$True)][string]$group,
-		[Parameter(Mandatory=$True)][string]$device
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -353,7 +402,8 @@ Function RemoveDeviceFromGroup
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
 		[Parameter(Mandatory=$True)][string]$group,
-		[Parameter(Mandatory=$True)][string]$device
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -384,7 +434,8 @@ Function GetGroup
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
-		[Parameter(Mandatory=$True)][string]$group
+		[Parameter(Mandatory=$True)][string]$group,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -411,7 +462,8 @@ Function GetProvisioning
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
-		[Parameter(Mandatory=$True)][string]$provisioning_template
+		[Parameter(Mandatory=$True)][string]$provisioning_template,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -439,7 +491,8 @@ Function SetProvisioning
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
 		[Parameter(Mandatory=$True)][string]$device,
-		[Parameter(Mandatory=$True)][string]$provisioning_template
+		[Parameter(Mandatory=$True)][string]$provisioning_template,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$InitData = @( @{
@@ -490,7 +543,8 @@ Function GetMetaFields
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
-		[Parameter(Mandatory=$True)][string]$device
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 	
 	$Token = Login
@@ -518,7 +572,8 @@ Function UpdateHostname
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$device,
-		[Parameter(Mandatory=$True)][string]$hostname
+		[Parameter(Mandatory=$True)][string]$hostname,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -549,7 +604,8 @@ Function SetName
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
 		[Parameter(Mandatory=$True)][string]$device,
-		[Parameter(Mandatory=$True)][string]$hostname
+		[Parameter(Mandatory=$True)][string]$hostname,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	$Token = Login
@@ -579,7 +635,8 @@ Function UpdateDevicePassword
 	[CmdletBinding()]
 	Param (
 		[Parameter(Mandatory=$True)][string]$adom,
-		[Parameter(Mandatory=$True)][string]$device
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(DontShow)]$HiddenParameter
 	)
 
 	# Validated in manifest file.
@@ -602,4 +659,92 @@ Function UpdateDevicePassword
 	Logout | Out-Null
 
 	return $response
+}
+#
+Function CreateObject
+{
+	<#
+	.DESCRIPTION
+		Create firewall object.
+	.EXAMPLE
+		$Result = CreateObject -type ipmask -adom "root" -name "Dummy" -subnet 192.168.0.0/255.255.0.0 -color 31
+	.EXAMPLE
+		$Result = CreateObject -type group -adom "root" -name "Dummy" -color 31 -member "Dummy,Dummy2"
+	#>
+
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$True, Position=0)][ValidateSet("ipmask","group")][string]$type,
+		[Parameter(Mandatory=$True, HelpMessage="Object name")][string]$object,
+		[Parameter(Mandatory=$True)][string]$adom,
+		[Parameter(Mandatory=$False)][int]$color,
+		[Parameter(DontShow)]$HiddenParameter
+	)
+	DynamicParam {
+        $paramDictionary = New-Object -TypeName System.Management.Automation.RuntimeDefinedParameterDictionary
+        IF ($type -eq "group")
+            {
+				$attributeCollection = New-Object -TypeName System.Collections.ObjectModel.Collection[System.Attribute]
+                $attribute = New-Object System.Management.Automation.ParameterAttribute
+                $attribute.Mandatory = $True
+                $attributeCollection.Add($attribute)
+                $Name = "member"
+                $dynParam = New-Object -TypeName System.Management.Automation.RuntimeDefinedParameter($Name,[string], $attributeCollection)
+                $paramDictionary.Add($Name, $dynParam)
+			}
+		IF ($type -eq "ipmask")
+            {
+                $attributeCollection = New-Object -TypeName System.Collections.ObjectModel.Collection[System.Attribute]
+                $attribute = New-Object System.Management.Automation.ParameterAttribute
+                $attribute.Mandatory = $True
+                $attributeCollection.Add($attribute)
+                $Name = "subnet"
+                $dynParam = New-Object -TypeName System.Management.Automation.RuntimeDefinedParameter($Name,[string], $attributeCollection)
+                $paramDictionary.Add($Name, $dynParam)
+			}
+		$paramDictionary
+	}
+	End {
+		$Token = Login
+		IF (!$Token) {Break}
+
+		$InitData = @( @{
+			url = "/pm/config/adom/$adom/obj/firewall/address"
+			data = @{
+				'name' = $object
+				'comment' = ""
+				'color' = $color
+				'visibility' = 1
+				'allow-routing' = 0
+				'subnet' = $PSBoundParameters.subnet
+			}
+		})
+
+		#Create group if choosen.
+		IF ($Type -eq "group")
+			{
+				Clear-Variable InitData
+				$List = New-Object Collections.Generic.List[String]
+				#$VariableCut = $member.Replace(" ","")
+				$List = $PSBoundParameters.member.Split(",")
+
+				$InitData = @( @{
+					url = "/pm/config/adom/$adom/obj/firewall/addrgrp"
+					data = @{
+						'name' = $object
+						'comment' = ""
+						'color' = $color
+						'visibility' = 1
+						'allow-routing' = 0
+						'member' = $List
+					}
+				})
+			}
+
+		$response = post "set" $InitData
+		# Clear session.
+		Logout | Out-Null
+
+		Return $response
+	}
 }
