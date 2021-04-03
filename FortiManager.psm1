@@ -79,7 +79,7 @@ Function GetDevice
 	.DESCRIPTION
 		Get device.
 	.EXAMPLE
-		$Result = GetDevive -adom "root" -device "Dummy"
+		$Result = GetDevice -adom "root" -device "Dummy"
 	#>
 
 	[CmdletBinding()]
