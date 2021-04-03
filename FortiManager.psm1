@@ -270,7 +270,6 @@ Function SetPolicyScope
 	IF (!$Token) {Break}
 
 	$response = post "set" $InitData
-
 	# Clear session.
 	Logout | Out-Null
 
@@ -473,10 +472,134 @@ Function SetProvisioning
 	IF (!$Token) {Break}
 
 	$response = post "set" $InitData
-
 	# Clear session.
 	Logout | Out-Null
 
 	return $response
 }
 #
+Function GetMetaFields
+{
+	<#
+	.DESCRIPTION
+		Get provisioning template.
+	.EXAMPLE
+		$Result = GetProvisioning -adom "root" -device "Dummy"
+	#>
+
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$True)][string]$adom,
+		[Parameter(Mandatory=$True)][string]$device
+	)
+	
+	$Token = Login
+	IF (!$Token) {Break}
+
+	$response = post "get" @( @{
+		url = "/dvmdb/adom/$adom/device/$device"
+		option = "get meta"
+	})
+	# Clear session.
+	Logout | Out-Null
+
+	return $response
+}
+#
+Function UpdateHostname
+{
+	<#
+	.DESCRIPTION
+		Update hostname.
+	.EXAMPLE
+		$Result = UpdateHostname -device "Dummy" -hostname "New-Dummy"
+	#>
+
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(Mandatory=$True)][string]$hostname
+	)
+
+	$Token = Login
+	IF (!$Token) {Break}
+
+	$response = post "update" @( @{
+		url = "pm/config/device/$device/global/system/global"
+		data = @{
+            hostname = $hostname
+            }
+	})
+	# Clear session.
+	Logout | Out-Null
+
+	return $response
+}
+#
+Function SetName
+{
+	<#
+	.DESCRIPTION
+		Set name.
+	.EXAMPLE
+		$Result = SetName -adom "root" -device "Dummy" -hostname "New-Dummy"
+	#>
+
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$True)][string]$adom,
+		[Parameter(Mandatory=$True)][string]$device,
+		[Parameter(Mandatory=$True)][string]$hostname
+	)
+
+	$Token = Login
+	IF (!$Token) {Break}
+
+	$response = post "update" @( @{
+		url = "/dvmdb/adom/$adom/device/$device"
+		data = @{
+            name = $hostname
+            }
+	})
+	# Clear session.
+	Logout | Out-Null
+
+	return $response
+}
+#
+Function UpdateDevicePassword
+{
+	<#
+	.DESCRIPTION
+		Update device password in FortiManager.
+	.EXAMPLE
+		$Result = UpdateDevicePassword -adom "root" -device "Dummy"
+	#>
+
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$True)][string]$adom,
+		[Parameter(Mandatory=$True)][string]$device
+	)
+
+	# Validated in manifest file.
+	Import-Module CredentialManager
+
+	# New-StoredCredential -Target FortiGate -UserName admin -Password "" -Comment "FortiGate Admin User" -Type Generic -Persist Enterprise
+	$Auth = Get-StoredCredential -Target FortiGate -AsCredentialObject
+
+	$Token = Login
+	IF (!$Token) {Break}
+
+	$response = post "update" @( @{
+		url = "/dvmdb/adom/$adom/device/$device"
+		data = @{
+			'adm_usr' = $Auth.UserName
+			'adm_pass' = $Auth.Password
+            }
+	})
+	# Clear session.
+	Logout | Out-Null
+
+	return $response
+}
