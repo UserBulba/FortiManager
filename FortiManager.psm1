@@ -667,9 +667,9 @@ Function CreateObject
 	.DESCRIPTION
 		Create firewall object.
 	.EXAMPLE
-		$Result = CreateObject -type ipmask -adom "root" -name "Dummy" -subnet 192.168.0.0/255.255.0.0 -color 31
+		$Result = CreateObject -type ipmask -adom "root" -object "Dummy" -subnet 192.168.0.0/255.255.0.0 -color 31
 	.EXAMPLE
-		$Result = CreateObject -type group -adom "root" -name "Dummy" -color 31 -member "Dummy,Dummy2"
+		$Result = CreateObject -type group -adom "root" -object "Group-Dummy" -color 31 -member "Dummy,Dummy2"
 	#>
 
 	[CmdletBinding()]
@@ -725,8 +725,9 @@ Function CreateObject
 			{
 				Clear-Variable InitData
 				$List = New-Object Collections.Generic.List[String]
-				#$VariableCut = $member.Replace(" ","")
-				$List = $PSBoundParameters.member.Split(",")
+				
+				Try {$List = $PSBoundParameters.member.Split(",")}
+				Catch {$List = $PSBoundParameters.member}
 
 				$InitData = @( @{
 					url = "/pm/config/adom/$adom/obj/firewall/addrgrp"
