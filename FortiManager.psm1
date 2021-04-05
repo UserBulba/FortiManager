@@ -667,9 +667,9 @@ Function GetObject
 	.DESCRIPTION
 		Get firewall object.
 	.EXAMPLE
-		$Result = CreateObject -type ipmask -adom "root" -object "Dummy" -subnet 192.168.0.0/255.255.0.0 -color 31
+		$Result = GetObject -type ipmask -adom "root" -object "Dummy"
 	.EXAMPLE
-		$Result = CreateObject -type group -adom "root" -object "Group-Dummy" -color 31 -member "Dummy,Dummy2"
+		$Result = GetObject -type group -adom "root" -object "Group-Dummy"
 	#>
 
 	[CmdletBinding()]
