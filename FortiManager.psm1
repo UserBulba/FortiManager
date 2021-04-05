@@ -661,6 +661,41 @@ Function UpdateDevicePassword
 	return $response
 }
 #
+Function GetObject
+{
+	<#
+	.DESCRIPTION
+		Get firewall object.
+	.EXAMPLE
+		$Result = CreateObject -type ipmask -adom "root" -object "Dummy" -subnet 192.168.0.0/255.255.0.0 -color 31
+	.EXAMPLE
+		$Result = CreateObject -type group -adom "root" -object "Group-Dummy" -color 31 -member "Dummy,Dummy2"
+	#>
+
+	[CmdletBinding()]
+	Param (
+		[Parameter(Mandatory=$False)][ValidateSet("ipmask","group")][string]$type,
+		[Parameter(Mandatory=$True)][string]$adom,
+		[Parameter(Mandatory=$True)][string]$name,
+		[Parameter(DontShow)]$HiddenParameter
+	)
+
+	$Token = Login
+	IF (!$Token) {Break}
+
+	IF ($type -eq "ipmask"){$obj = "address"}
+	ELSEIF ($type -eq "group"){$obj = "addrgrp"}
+
+	$response = post "get" @( @{
+		url = "/pm/config/adom/$adom/obj/firewall/$obj/$name/"
+	})
+
+	# Clear session.
+	Logout | Out-Null
+
+	return $response
+}
+#
 Function CreateObject
 {
 	<#
